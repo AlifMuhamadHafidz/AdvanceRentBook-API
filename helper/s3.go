@@ -86,7 +86,7 @@ func UploadToS3(fileName string, src multipart.File) (string, error) {
 	uploader := s3manager.NewUploader(sess)
 	// Upload the file to S3.
 	result, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket:      aws.String("alifs3bucket"),
+		Bucket:      aws.String("alif-s3"),
 		Key:         aws.String(fileName),
 		Body:        src,
 		ContentType: aws.String("image/png"),

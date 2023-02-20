@@ -1,6 +1,9 @@
 package handler
 
-import "advancerentbook-api/features/user"
+import (
+	"advancerentbook-api/features/user"
+	"errors"
+)
 
 type UserReponse struct {
 	ID       uint   `json:"id"`
@@ -40,4 +43,42 @@ func ToProfileResponse(data user.Core) ProfileResponse {
 		Phone:          data.Phone,
 		Address:        data.Address,
 	}
+}
+
+func ConvertUpdateResponse(input user.Core) (interface{}, error) {
+	ResponseFilter := user.Core{}
+	ResponseFilter = input
+	result := make(map[string]interface{})
+	if ResponseFilter.ID != 0 {
+		result["id"] = ResponseFilter.ID
+	}
+	if ResponseFilter.ProfilePicture != "" {
+		result["profile_picture"] = ResponseFilter.ProfilePicture
+	}
+	if ResponseFilter.Name != "" {
+		result["name"] = ResponseFilter.Name
+	}
+	if ResponseFilter.Username != "" {
+		result["username"] = ResponseFilter.Username
+	}
+	if ResponseFilter.BirthOfDate != "" {
+		result["birth_of_date"] = ResponseFilter.BirthOfDate
+	}
+	if ResponseFilter.Email != "" {
+		result["email"] = ResponseFilter.Email
+	}
+	if ResponseFilter.Phone != "" {
+		result["phone"] = ResponseFilter.Phone
+	}
+	if ResponseFilter.Address != "" {
+		result["address"] = ResponseFilter.Address
+	}
+	if ResponseFilter.Password != "" {
+		result["password"] = ResponseFilter.Password
+	}
+
+	if len(result) <= 1 {
+		return user.Core{}, errors.New("no data was change")
+	}
+	return result, nil
 }
