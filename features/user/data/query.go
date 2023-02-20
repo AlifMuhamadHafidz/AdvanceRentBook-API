@@ -17,11 +17,6 @@ func (*userQuery) Deactivate(userID uint) error {
 	panic("unimplemented")
 }
 
-// Login implements user.UserData
-func (*userQuery) Login(username string) (user.Core, error) {
-	panic("unimplemented")
-}
-
 // Profile implements user.UserData
 func (*userQuery) Profile(userID uint) (user.Core, error) {
 	panic("unimplemented")
@@ -57,4 +52,18 @@ func (uq *userQuery) Register(newUser user.Core) (user.Core, error) {
 
 	newUser.ID = cnv.ID
 	return newUser, nil
+}
+
+func (uq *userQuery) Login(username string) (user.Core, error) {
+	if username == "" {
+		log.Println("data empty, query error")
+		return user.Core{}, errors.New("username not allowed empty")
+	}
+	res := User{}
+	if err := uq.db.Where("username = ?", username).First(&res).Error; err != nil {
+		log.Println("login query error", err.Error())
+		return user.Core{}, errors.New("data not found")
+	}
+
+	return ToCore(res), nil
 }

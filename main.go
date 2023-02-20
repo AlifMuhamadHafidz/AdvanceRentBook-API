@@ -30,6 +30,7 @@ func main() {
 
 	//users
 	e.POST("/register", uHdl.Register())
+	e.POST("/login", uHdl.Login())
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())

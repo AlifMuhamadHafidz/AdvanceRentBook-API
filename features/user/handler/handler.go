@@ -18,11 +18,6 @@ func (*userControll) Deactivate() echo.HandlerFunc {
 	panic("unimplemented")
 }
 
-// Login implements user.UserHandler
-func (*userControll) Login() echo.HandlerFunc {
-	panic("unimplemented")
-}
-
 // Profile implements user.UserHandler
 func (*userControll) Profile() echo.HandlerFunc {
 	panic("unimplemented")
@@ -61,5 +56,35 @@ func (uc *userControll) Register() echo.HandlerFunc {
 		}
 		log.Println(res)
 		return c.JSON(http.StatusCreated, map[string]interface{}{"message": "success create account"})
+	}
+}
+
+func (uc *userControll) Login() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		input := LoginRequest{}
+		err := c.Bind(&input)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "input format incorrect"})
+		}
+
+		if input.Username == "" {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "username not allowed empty"})
+		} else if input.Password == "" {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "password not allowed empty"})
+		}
+
+		token, res, err := uc.srv.Login(input.Username, input.Password)
+		if err != nil {
+			if strings.Contains(err.Error(), "password") {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "password not match"})
+			} else {
+				return c.JSON(http.StatusNotFound, map[string]interface{}{"message": "account not registered"})
+			}
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    ToResponse(res),
+			"token":   token,
+			"message": "success login",
+		})
 	}
 }

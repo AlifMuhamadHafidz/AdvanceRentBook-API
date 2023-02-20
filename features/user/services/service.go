@@ -1,11 +1,16 @@
 package services
 
 import (
+	"advancerentbook-api/config"
 	"advancerentbook-api/features/user"
 	"advancerentbook-api/helper"
 	"errors"
+	"log"
 	"mime/multipart"
 	"strings"
+	"time"
+
+	"github.com/golang-jwt/jwt"
 )
 
 type userUseCase struct {
@@ -14,11 +19,6 @@ type userUseCase struct {
 
 // Deactivate implements user.UserService
 func (*userUseCase) Deactivate(token interface{}) error {
-	panic("unimplemented")
-}
-
-// Login implements user.UserService
-func (*userUseCase) Login(username string, password string) (user.Core, error) {
 	panic("unimplemented")
 }
 
@@ -61,4 +61,31 @@ func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
 	}
 
 	return res, nil
+}
+
+func (uuc *userUseCase) Login(username, password string) (string, user.Core, error) {
+	res, err := uuc.qry.Login(username)
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "there is a problem with the server"
+		}
+		return "", user.Core{}, errors.New(msg)
+	}
+
+	if err := helper.ComparePassword(res.Password, password); err != nil {
+		log.Println("login compare", err.Error())
+		return "", user.Core{}, errors.New("password not matched")
+	}
+
+	claims := jwt.MapClaims{}
+	claims["authorized"] = true
+	claims["userID"] = res.ID
+	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	useToken, _ := token.SignedString([]byte(config.JWTKey))
+
+	return useToken, res, nil
 }
