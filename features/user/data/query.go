@@ -12,6 +12,26 @@ type userQuery struct {
 	db *gorm.DB
 }
 
+// Deactivate implements user.UserData
+func (*userQuery) Deactivate(userID uint) error {
+	panic("unimplemented")
+}
+
+// Login implements user.UserData
+func (*userQuery) Login(username string) (user.Core, error) {
+	panic("unimplemented")
+}
+
+// Profile implements user.UserData
+func (*userQuery) Profile(userID uint) (user.Core, error) {
+	panic("unimplemented")
+}
+
+// Update implements user.UserData
+func (*userQuery) Update(userID uint, updateData user.Core) (user.Core, error) {
+	panic("unimplemented")
+}
+
 func New(db *gorm.DB) user.UserData {
 	return &userQuery{
 		db: db,

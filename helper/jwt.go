@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"incrediblefour/config"
+	"advancerentbook-api/config"
 
 	"github.com/golang-jwt/jwt"
 )
