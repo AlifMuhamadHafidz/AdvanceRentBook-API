@@ -17,11 +17,6 @@ type userUseCase struct {
 	qry user.UserData
 }
 
-// Deactivate implements user.UserService
-func (*userUseCase) Deactivate(token interface{}) error {
-	panic("unimplemented")
-}
-
 func New(ud user.UserData) user.UserService {
 	return &userUseCase{
 		qry: ud,
@@ -115,4 +110,14 @@ func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader,
 		return user.Core{}, errors.New(msg)
 	}
 	return res, nil
+}
+
+func (uuc *userUseCase) Deactivate(token interface{}) error {
+	id := helper.ExtractToken(token)
+	err := uuc.qry.Deactivate(uint(id))
+	if err != nil {
+		log.Println("query error", err.Error())
+		return errors.New("query error, delete account fail")
+	}
+	return nil
 }

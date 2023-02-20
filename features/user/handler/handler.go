@@ -13,11 +13,6 @@ type userControll struct {
 	srv user.UserService
 }
 
-// Deactivate implements user.UserHandler
-func (*userControll) Deactivate() echo.HandlerFunc {
-	panic("unimplemented")
-}
-
 func New(srv user.UserService) user.UserHandler {
 	return &userControll{
 		srv: srv,
@@ -143,5 +138,19 @@ func (uc *userControll) Update() echo.HandlerFunc {
 				"message": "success update user profile",
 			})
 		}
+	}
+}
+
+func (uc *userControll) Deactivate() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		err := uc.srv.Deactivate(c.Get("user"))
+		if err != nil {
+			return c.JSON(http.StatusNotFound, map[string]interface{}{
+				"message": "data not found",
+			})
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success deactivate",
+		})
 	}
 }
