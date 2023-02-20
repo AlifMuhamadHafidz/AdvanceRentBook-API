@@ -18,11 +18,6 @@ func (*userControll) Deactivate() echo.HandlerFunc {
 	panic("unimplemented")
 }
 
-// Profile implements user.UserHandler
-func (*userControll) Profile() echo.HandlerFunc {
-	panic("unimplemented")
-}
-
 // Update implements user.UserHandler
 func (*userControll) Update() echo.HandlerFunc {
 	panic("unimplemented")
@@ -85,6 +80,20 @@ func (uc *userControll) Login() echo.HandlerFunc {
 			"data":    ToResponse(res),
 			"token":   token,
 			"message": "success login",
+		})
+	}
+}
+
+func (uc *userControll) Profile() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		res, err := uc.srv.Profile(c.Get("user"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    ToProfileResponse(res),
+			"message": "success show profile",
 		})
 	}
 }

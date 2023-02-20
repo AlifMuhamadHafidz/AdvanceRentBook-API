@@ -31,6 +31,7 @@ func main() {
 	//users
 	e.POST("/register", uHdl.Register())
 	e.POST("/login", uHdl.Login())
+	e.GET("/users", uHdl.Profile(), middleware.JWT([]byte(config.JWTKey)))
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())

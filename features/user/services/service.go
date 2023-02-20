@@ -22,11 +22,6 @@ func (*userUseCase) Deactivate(token interface{}) error {
 	panic("unimplemented")
 }
 
-// Profile implements user.UserService
-func (*userUseCase) Profile(token interface{}) (user.Core, error) {
-	panic("unimplemented")
-}
-
 // Update implements user.UserService
 func (*userUseCase) Update(token interface{}, fileData multipart.FileHeader, updateData user.Core) (user.Core, error) {
 	panic("unimplemented")
@@ -88,4 +83,14 @@ func (uuc *userUseCase) Login(username, password string) (string, user.Core, err
 	useToken, _ := token.SignedString([]byte(config.JWTKey))
 
 	return useToken, res, nil
+}
+
+func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
+	userID := helper.ExtractToken(token)
+	res, err := uuc.qry.Profile(uint(userID))
+	if err != nil {
+		log.Println("data not found")
+		return user.Core{}, errors.New("query error, problem with server")
+	}
+	return res, nil
 }
