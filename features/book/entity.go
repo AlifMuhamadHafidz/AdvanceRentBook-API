@@ -27,7 +27,7 @@ type BookHandler interface {
 
 type BookService interface {
 	Add(token interface{}, fileData multipart.FileHeader, newBook Core) (Core, error)
-	GetAllBook() ([]Core, error)
+	GetAllBook(quote string) ([]Core, error)
 	BookDetail(bookID uint) (Core, error)
 	Update(token interface{}, fileData multipart.FileHeader, updatedBook Core) (Core, error)
 	Delete(token interface{}, bookID uint) error
@@ -35,7 +35,7 @@ type BookService interface {
 
 type BookData interface {
 	Add(userID uint, newBook Core) (Core, error)
-	GetAllBook() ([]Core, error)
+	GetAllBook(quote string) ([]Core, error)
 	BookDetail(bookID uint) (Core, error)
 	Update(userID uint, updatedBook Core) (Core, error)
 	Delete(userID uint, bookID uint) error

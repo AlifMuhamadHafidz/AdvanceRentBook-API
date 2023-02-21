@@ -45,6 +45,7 @@ func main() {
 
 	//books
 	e.POST("/books", bHdl.Add(), middleware.JWT([]byte(config.JWTKey)))
+	e.GET("/books", bHdl.GetAllBook())
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())

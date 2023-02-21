@@ -22,11 +22,6 @@ func (*bookControll) Delete() echo.HandlerFunc {
 	panic("unimplemented")
 }
 
-// GetAllBook implements book.BookHandler
-func (*bookControll) GetAllBook() echo.HandlerFunc {
-	panic("unimplemented")
-}
-
 // Update implements book.BookHandler
 func (*bookControll) Update() echo.HandlerFunc {
 	panic("unimplemented")
@@ -76,6 +71,41 @@ func (bc *bookControll) Add() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"data":    res,
 			"message": "success post a book",
+		})
+
+	}
+}
+
+// GetAllBook implements book.BookHandler
+func (bc *bookControll) GetAllBook() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		resBook := []Book{}
+		quotes := c.QueryParam("q")
+
+		res, err := bc.srv.GetAllBook(quotes)
+		if err != nil {
+			if len(res) == 0 {
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{"message": "book not found"})
+			}
+		}
+		for _, val := range res {
+			resBook = append(resBook, SearchResponse(val))
+		}
+		if quotes == "" {
+			return c.JSON(http.StatusOK, map[string]interface{}{
+				"data":    resBook,
+				"message": "success show all book",
+			})
+		}
+
+		result := []Search{}
+		for i := 0; i < len(res); i++ {
+			result = append(result, SearchBookResponse(res[i]))
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    result,
+			"message": "searching success",
 		})
 
 	}
