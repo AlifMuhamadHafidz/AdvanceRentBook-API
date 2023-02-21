@@ -13,11 +13,6 @@ type bookUseCase struct {
 	qry book.BookData
 }
 
-// BookDetail implements book.BookService
-func (*bookUseCase) BookDetail(bookID uint) (book.Core, error) {
-	panic("unimplemented")
-}
-
 // Delete implements book.BookService
 func (*bookUseCase) Delete(token interface{}, bookID uint) error {
 	panic("unimplemented")
@@ -67,5 +62,19 @@ func (buc *bookUseCase) GetAllBook(quote string) ([]book.Core, error) {
 			return []book.Core{}, errors.New("data not found")
 		}
 	}
+	return res, nil
+}
+
+func (buc *bookUseCase) BookDetail(bookID uint) (book.Core, error) {
+	res, err := buc.qry.BookDetail(bookID)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return book.Core{}, errors.New("data not found")
+		} else {
+			return book.Core{}, errors.New("internal server error")
+		}
+	}
+
 	return res, nil
 }

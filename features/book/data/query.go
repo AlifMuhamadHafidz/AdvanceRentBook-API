@@ -12,11 +12,6 @@ type bookQuery struct {
 	db *gorm.DB
 }
 
-// BookDetail implements book.BookData
-func (*bookQuery) BookDetail(bookID uint) (book.Core, error) {
-	panic("unimplemented")
-}
-
 // Delete implements book.BookData
 func (*bookQuery) Delete(userID uint, bookID uint) error {
 	panic("unimplemented")
@@ -67,5 +62,19 @@ func (bq *bookQuery) GetAllBook(quote string) ([]book.Core, error) {
 			}
 		}
 	}
+	return result, nil
+}
+
+func (bq *bookQuery) BookDetail(bookID uint) (book.Core, error) {
+	res := Book{}
+
+	err := bq.db.Where("id = ?", bookID).First(&res).Error
+	if err != nil {
+		log.Println("data not found", err.Error())
+		return book.Core{}, errors.New("data not found")
+	}
+
+	result := DataToCore(res)
+
 	return result, nil
 }

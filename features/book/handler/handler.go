@@ -2,7 +2,10 @@ package handler
 
 import (
 	"advancerentbook-api/features/book"
+	"advancerentbook-api/helper"
+	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -10,11 +13,6 @@ import (
 
 type bookControll struct {
 	srv book.BookService
-}
-
-// BookDetail implements book.BookHandler
-func (*bookControll) BookDetail() echo.HandlerFunc {
-	panic("unimplemented")
 }
 
 // Delete implements book.BookHandler
@@ -89,7 +87,7 @@ func (bc *bookControll) GetAllBook() echo.HandlerFunc {
 			}
 		}
 		for _, val := range res {
-			resBook = append(resBook, SearchResponse(val))
+			resBook = append(resBook, BookResponse(val))
 		}
 		if quotes == "" {
 			return c.JSON(http.StatusOK, map[string]interface{}{
@@ -98,9 +96,9 @@ func (bc *bookControll) GetAllBook() echo.HandlerFunc {
 			})
 		}
 
-		result := []Search{}
+		result := []Book{}
 		for i := 0; i < len(res); i++ {
-			result = append(result, SearchBookResponse(res[i]))
+			result = append(result, BookResponse(res[i]))
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
@@ -108,5 +106,28 @@ func (bc *bookControll) GetAllBook() echo.HandlerFunc {
 			"message": "searching success",
 		})
 
+	}
+}
+
+func (bc *bookControll) BookDetail() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		paramID := c.Param("id")
+
+		bookID, err := strconv.Atoi(paramID)
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(http.StatusBadGateway, "invalid input")
+		}
+
+		res, err := bc.srv.BookDetail(uint(bookID))
+
+		if err != nil {
+			if strings.Contains(err.Error(), "data") {
+				return c.JSON(http.StatusNotFound, map[string]interface{}{
+					"message": "data not found",
+				})
+			}
+		}
+		return c.JSON(helper.PrintSuccessReponse(http.StatusOK, "success get book details", BookResponse(res)))
 	}
 }
