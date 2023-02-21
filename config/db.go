@@ -2,6 +2,7 @@ package config
 
 import (
 	bData "advancerentbook-api/features/book/data"
+	cData "advancerentbook-api/features/cart/data"
 	uData "advancerentbook-api/features/user/data"
 	"fmt"
 	"log"
@@ -25,4 +26,5 @@ func InitDB(dc DBConfig) *gorm.DB {
 func Migrate(db *gorm.DB) {
 	db.AutoMigrate(uData.User{})
 	db.AutoMigrate(bData.Book{})
+	db.AutoMigrate(cData.Cart{})
 }
