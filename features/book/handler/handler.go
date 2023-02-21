@@ -15,11 +15,6 @@ type bookControll struct {
 	srv book.BookService
 }
 
-// Delete implements book.BookHandler
-func (*bookControll) Delete() echo.HandlerFunc {
-	panic("unimplemented")
-}
-
 func New(srv book.BookService) book.BookHandler {
 	return &bookControll{
 		srv: srv,
@@ -184,5 +179,30 @@ func (bc *bookControll) Update() echo.HandlerFunc {
 				"message": "success update book",
 			})
 		}
+	}
+}
+
+func (bc *bookControll) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Get("user")
+
+		paramID := c.Param("id")
+
+		bookID, err := strconv.Atoi(paramID)
+
+		if err != nil {
+			log.Println("convert id error", err.Error())
+			return c.JSON(http.StatusBadGateway, "Invalid input")
+		}
+
+		err = bc.srv.Delete(token, uint(bookID))
+
+		if err != nil {
+			return c.JSON(helper.PrintErrorResponse(err.Error()))
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete book",
+		})
 	}
 }

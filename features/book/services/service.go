@@ -13,11 +13,6 @@ type bookUseCase struct {
 	qry book.BookData
 }
 
-// Delete implements book.BookService
-func (*bookUseCase) Delete(token interface{}, bookID uint) error {
-	panic("unimplemented")
-}
-
 func New(bd book.BookData) book.BookService {
 	return &bookUseCase{
 		qry: bd,
@@ -74,7 +69,6 @@ func (buc *bookUseCase) BookDetail(bookID uint) (book.Core, error) {
 	return res, nil
 }
 
-// Update implements book.BookService
 func (buc *bookUseCase) Update(token interface{}, bookID uint, fileData multipart.FileHeader, updatedBook book.Core) (book.Core, error) {
 	userID := helper.ExtractToken(token)
 
@@ -98,4 +92,17 @@ func (buc *bookUseCase) Update(token interface{}, bookID uint, fileData multipar
 	}
 
 	return res, nil
+}
+
+func (buc *bookUseCase) Delete(token interface{}, bookID uint) error {
+	id := helper.ExtractToken(token)
+
+	err := buc.qry.Delete(uint(id), bookID)
+
+	if err != nil {
+		log.Println("delete query error", err.Error())
+		return errors.New("data not found")
+	}
+
+	return nil
 }

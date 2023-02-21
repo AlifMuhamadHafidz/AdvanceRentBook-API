@@ -12,11 +12,6 @@ type bookQuery struct {
 	db *gorm.DB
 }
 
-// Delete implements book.BookData
-func (*bookQuery) Delete(userID uint, bookID uint) error {
-	panic("unimplemented")
-}
-
 func New(db *gorm.DB) book.BookData {
 	return &bookQuery{
 		db: db,
@@ -90,4 +85,23 @@ func (bq *bookQuery) Update(userID uint, bookID uint, updatedBook book.Core) (bo
 		return book.Core{}, errors.New("user not found")
 	}
 	return updatedBook, nil
+}
+
+func (bq *bookQuery) Delete(userID uint, bookID uint) error {
+	getID := Book{}
+	err := bq.db.Where("id = ?", bookID).First(&getID).Error
+	if err != nil {
+		log.Println("get book error : ", err.Error())
+		return errors.New("failed to get book data")
+	}
+
+	qryDelete := bq.db.Delete(&Book{}, bookID)
+	affRow := qryDelete.RowsAffected
+
+	if affRow <= 0 {
+		log.Println("no rows affected")
+		return errors.New("failed to delete announcement, data not found")
+	}
+
+	return nil
 }
