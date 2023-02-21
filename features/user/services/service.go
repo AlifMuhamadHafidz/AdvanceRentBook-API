@@ -17,21 +17,6 @@ type userUseCase struct {
 	qry user.UserData
 }
 
-// Deactivate implements user.UserService
-func (*userUseCase) Deactivate(token interface{}) error {
-	panic("unimplemented")
-}
-
-// Profile implements user.UserService
-func (*userUseCase) Profile(token interface{}) (user.Core, error) {
-	panic("unimplemented")
-}
-
-// Update implements user.UserService
-func (*userUseCase) Update(token interface{}, fileData multipart.FileHeader, updateData user.Core) (user.Core, error) {
-	panic("unimplemented")
-}
-
 func New(ud user.UserData) user.UserService {
 	return &userUseCase{
 		qry: ud,
@@ -88,4 +73,51 @@ func (uuc *userUseCase) Login(username, password string) (string, user.Core, err
 	useToken, _ := token.SignedString([]byte(config.JWTKey))
 
 	return useToken, res, nil
+}
+
+func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
+	userID := helper.ExtractToken(token)
+	res, err := uuc.qry.Profile(uint(userID))
+	if err != nil {
+		log.Println("data not found")
+		return user.Core{}, errors.New("query error, problem with server")
+	}
+	return res, nil
+}
+
+func (uuc *userUseCase) Update(token interface{}, fileData multipart.FileHeader, updateData user.Core) (user.Core, error) {
+	userID := helper.ExtractToken(token)
+
+	hashed := helper.GeneratePassword(updateData.Password)
+	updateData.Password = string(hashed)
+	log.Println("size:", fileData.Size)
+
+	url, err := helper.GetUrlImagesFromAWS(fileData)
+	if err != nil {
+		return user.Core{}, errors.New("validate: " + err.Error())
+	}
+	updateData.ProfilePicture = url
+	res, err := uuc.qry.Update(uint(userID), updateData)
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "account not registered"
+		} else if strings.Contains(err.Error(), "email") {
+			msg = "email duplicated"
+		} else if strings.Contains(err.Error(), "access denied") {
+			msg = "access denied"
+		}
+		return user.Core{}, errors.New(msg)
+	}
+	return res, nil
+}
+
+func (uuc *userUseCase) Deactivate(token interface{}) error {
+	id := helper.ExtractToken(token)
+	err := uuc.qry.Deactivate(uint(id))
+	if err != nil {
+		log.Println("query error", err.Error())
+		return errors.New("query error, delete account fail")
+	}
+	return nil
 }
