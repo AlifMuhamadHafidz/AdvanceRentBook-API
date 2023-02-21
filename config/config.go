@@ -14,6 +14,8 @@ var (
 	AWS_REGION        = ""
 	ACCESS_KEY_ID     = ""
 	ACCESS_KEY_SECRET = ""
+	SECRET_KEY        = ""
+	CALLBACK_TOKEN    = ""
 )
 
 type DBConfig struct {
@@ -26,6 +28,8 @@ type DBConfig struct {
 	AWS_REGION        string
 	ACCESS_KEY_ID     string
 	ACCESS_KEY_SECRET string
+	SECRET_KEY        string
+	CALLBACK_TOKEN    string
 }
 
 // membuat fungsi global untuk pemanggilan config
@@ -77,6 +81,16 @@ func ReadEnv() *DBConfig {
 		isRead = false
 	}
 
+	if val, found := os.LookupEnv("SECRET_KEY"); found {
+		app.SECRET_KEY = val
+		isRead = false
+	}
+
+	if val, found := os.LookupEnv("CALLBACK_TOKEN"); found {
+		app.CALLBACK_TOKEN = val
+		isRead = false
+	}
+
 	if isRead {
 		viper.AddConfigPath(".")
 		viper.SetConfigName("local")
@@ -96,6 +110,8 @@ func ReadEnv() *DBConfig {
 	AWS_REGION = app.AWS_REGION
 	ACCESS_KEY_ID = app.ACCESS_KEY_ID
 	ACCESS_KEY_SECRET = app.ACCESS_KEY_SECRET
+	SECRET_KEY = app.SECRET_KEY
+	CALLBACK_TOKEN = app.CALLBACK_TOKEN
 
 	return &app
 }
