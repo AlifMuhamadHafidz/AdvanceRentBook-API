@@ -17,11 +17,6 @@ func (*bookQuery) Delete(userID uint, bookID uint) error {
 	panic("unimplemented")
 }
 
-// Update implements book.BookData
-func (*bookQuery) Update(userID uint, updatedBook book.Core) (book.Core, error) {
-	panic("unimplemented")
-}
-
 func New(db *gorm.DB) book.BookData {
 	return &bookQuery{
 		db: db,
@@ -77,4 +72,22 @@ func (bq *bookQuery) BookDetail(bookID uint) (book.Core, error) {
 	result := DataToCore(res)
 
 	return result, nil
+}
+
+func (bq *bookQuery) Update(userID uint, bookID uint, updatedBook book.Core) (book.Core, error) {
+	cnv := CoreToData(updatedBook)
+	cnv.ID = uint(bookID)
+
+	qry := bq.db.Where("id = ?", bookID).Updates(&cnv)
+	affrows := qry.RowsAffected
+	if affrows == 0 {
+		log.Println("no rows affected")
+		return book.Core{}, errors.New("no data updated")
+	}
+	err := qry.Error
+	if err != nil {
+		log.Println("update user query error", err.Error())
+		return book.Core{}, errors.New("user not found")
+	}
+	return updatedBook, nil
 }

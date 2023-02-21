@@ -1,6 +1,9 @@
 package handler
 
-import "advancerentbook-api/features/book"
+import (
+	"advancerentbook-api/features/book"
+	"errors"
+)
 
 type Book struct {
 	ID        uint    `json:"id"`
@@ -22,4 +25,36 @@ func BookResponse(data book.Core) Book {
 		Publisher: data.Publisher,
 		RentPrice: data.RentPrice,
 	}
+}
+
+func ConvertBookUpdateResponse(input book.Core) (interface{}, error) {
+	ResponseFilter := book.Core{}
+	ResponseFilter = input
+	result := make(map[string]interface{})
+	if ResponseFilter.ID != 0 {
+		result["id"] = ResponseFilter.ID
+	}
+	if ResponseFilter.Image != "" {
+		result["image"] = ResponseFilter.Image
+	}
+	if ResponseFilter.Title != "" {
+		result["title"] = ResponseFilter.Title
+	}
+	if ResponseFilter.Published != 0 {
+		result["published"] = ResponseFilter.Published
+	}
+	if ResponseFilter.Author != "" {
+		result["author"] = ResponseFilter.Author
+	}
+	if ResponseFilter.Publisher != "" {
+		result["publisher"] = ResponseFilter.Publisher
+	}
+	if ResponseFilter.RentPrice != 0 {
+		result["rent_price"] = ResponseFilter.RentPrice
+	}
+
+	if len(result) <= 1 {
+		return book.Core{}, errors.New("no data was change")
+	}
+	return result, nil
 }

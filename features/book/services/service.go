@@ -18,11 +18,6 @@ func (*bookUseCase) Delete(token interface{}, bookID uint) error {
 	panic("unimplemented")
 }
 
-// Update implements book.BookService
-func (*bookUseCase) Update(token interface{}, fileData multipart.FileHeader, updatedBook book.Core) (book.Core, error) {
-	panic("unimplemented")
-}
-
 func New(bd book.BookData) book.BookService {
 	return &bookUseCase{
 		qry: bd,
@@ -67,6 +62,32 @@ func (buc *bookUseCase) GetAllBook(quote string) ([]book.Core, error) {
 
 func (buc *bookUseCase) BookDetail(bookID uint) (book.Core, error) {
 	res, err := buc.qry.BookDetail(bookID)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return book.Core{}, errors.New("data not found")
+		} else {
+			return book.Core{}, errors.New("internal server error")
+		}
+	}
+
+	return res, nil
+}
+
+// Update implements book.BookService
+func (buc *bookUseCase) Update(token interface{}, bookID uint, fileData multipart.FileHeader, updatedBook book.Core) (book.Core, error) {
+	userID := helper.ExtractToken(token)
+
+	if userID <= 0 {
+		return book.Core{}, errors.New("user not found")
+	}
+
+	url, err := helper.GetUrlImagesFromAWS(fileData)
+	if err != nil {
+		return book.Core{}, errors.New("validate: " + err.Error())
+	}
+	updatedBook.Image = url
+	res, err := buc.qry.Update(uint(userID), bookID, updatedBook)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
