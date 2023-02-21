@@ -28,7 +28,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}, error=${error}\n",
 	}))
 
-	//user
+	//users
 	e.POST("/register", uHdl.Register())
 	e.POST("/login", uHdl.Login())
 	e.GET("/users", uHdl.Profile(), middleware.JWT([]byte(config.JWTKey)))
