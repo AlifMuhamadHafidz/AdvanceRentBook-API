@@ -1,35 +1,53 @@
 package data
 
 import (
-	book "advancerentbook-api/features/book/data"
-	user "advancerentbook-api/features/user/data"
-
 	"advancerentbook-api/features/cart"
+
+	"gorm.io/gorm"
 )
 
 type Cart struct {
-	ID        uint
+	gorm.Model
 	UserID    uint
 	BookID    uint
-	RentPrice float64
-	Owner     user.User `gorm:"foreignkey:UserID;association_foreignkey:ID"`
-	Book      book.Book `gorm:"foreignkey:BookID;association_foreignkey:ID"`
+	RentPrice int
+	User      User
+}
+
+type Book struct {
+	gorm.Model
+	Title     string
+	Image     string
+	RentPrice int
+	UserID    uint
+}
+
+type User struct {
+	gorm.Model
+	Name      string
+	Email     string
+	Phone     string
+	Address   string
+	UserImage string
 }
 
 func DataToCore(data Cart) cart.Core {
 	return cart.Core{
 		ID:        data.ID,
-		UserID:    data.UserID,
-		BookID:    data.BookID,
 		RentPrice: data.RentPrice,
+		User: cart.User{
+			ID:      data.User.ID,
+			Name:    data.User.Name,
+			Email:   data.User.Email,
+			Phone:   data.User.Phone,
+			Address: data.User.Address,
+		},
 	}
 }
 
-func CoreToData(data cart.Core) Cart {
+func CoreToData(core cart.Core) Cart {
 	return Cart{
-		ID:        data.ID,
-		UserID:    data.UserID,
-		BookID:    data.BookID,
-		RentPrice: data.RentPrice,
+		Model:     gorm.Model{ID: core.ID},
+		RentPrice: core.RentPrice,
 	}
 }

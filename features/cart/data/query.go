@@ -34,14 +34,21 @@ func New(db *gorm.DB) cart.CartData {
 }
 
 func (cq *cartQuery) AddCart(userID uint, bookID uint, newCart cart.Core) (cart.Core, error) {
-	cnvC := CoreToData(newCart)
-	cnvC.UserID = userID
-	cnvC.BookID = bookID
-
-	err := cq.db.Create(&cnvC).Error
+	book := Book{}
+	err := cq.db.Where("id=?", bookID).First(&book).Error
 	if err != nil {
-		log.Println("add cart query error: ", err.Error())
-		return cart.Core{}, errors.New("server problem")
+		log.Println("query error", err.Error())
+		return cart.Core{}, errors.New("server error")
 	}
-	return DataToCore(cnvC), nil
+	cnv := CoreToData(newCart)
+	cnv.BookID = book.ID
+	cnv.UserID = userID
+	cnv.RentPrice = book.RentPrice
+	err = cq.db.Create(&cnv).Error
+	if err != nil {
+		log.Println("query error", err.Error())
+		return cart.Core{}, errors.New("server error")
+	}
+	result := DataToCore(cnv)
+	return result, nil
 }

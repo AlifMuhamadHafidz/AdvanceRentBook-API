@@ -47,8 +47,8 @@ func (cc *cartControll) AddCart() echo.HandlerFunc {
 			log.Println("error running add book service: ", err.Error())
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "server problem"})
 		}
+		log.Println(res)
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    res,
 			"message": "success add book to cart",
 		})
 	}

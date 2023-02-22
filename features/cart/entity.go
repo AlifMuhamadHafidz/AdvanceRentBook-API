@@ -2,15 +2,32 @@ package cart
 
 import "github.com/labstack/echo/v4"
 
+// type Core struct {
+// 	ID        uint    `json:"id"`
+// 	UserID    uint    `json:"id_user"`
+// 	OwnerID   uint    `json:"owner_id"`
+// 	BookID    uint    `json:"book_id"`
+// 	Image     string  `json:"image"`
+// 	RentPrice float64 `json:"rent_price"`
+// 	BookName  string  `json:"book_name"`
+// 	OwnerName string  `json:"owner_name"`
+// }
+
 type Core struct {
-	ID        uint    `json:"id"`
-	UserID    uint    `json:"id_user"`
-	OwnerID   uint    `json:"owner_id"`
-	BookID    uint    `json:"book_id"`
-	Image     string  `json:"image"`
-	RentPrice float64 `json:"rent_price"`
-	BookName  string  `json:"book_name"`
-	OwnerName string  `json:"owner_name"`
+	ID        uint   `json:"id"`
+	BookName  string `json:"book_name"`
+	Image     string `json:"image"`
+	Owner     string `json:"owner"`
+	RentPrice int    `json:"rent_price"`
+	User      User   `json:"user"`
+}
+
+type User struct {
+	ID      uint   `json:"id"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Phone   string `json:"phone"`
+	Address string `json:"address"`
 }
 
 type CartHandler interface {
