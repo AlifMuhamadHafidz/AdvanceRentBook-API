@@ -81,7 +81,7 @@ func (bq *bookQuery) Update(userID uint, bookID uint, updatedBook book.Core) (bo
 	}
 	err := qry.Error
 	if err != nil {
-		log.Println("update user query error", err.Error())
+		log.Println("update book query error", err.Error())
 		return book.Core{}, errors.New("user not found")
 	}
 	return updatedBook, nil
@@ -100,7 +100,7 @@ func (bq *bookQuery) Delete(userID uint, bookID uint) error {
 
 	if affRow <= 0 {
 		log.Println("no rows affected")
-		return errors.New("failed to delete announcement, data not found")
+		return errors.New("failed to delete book, data not found")
 	}
 
 	return nil
