@@ -12,16 +12,6 @@ type cartUseCase struct {
 	qry cart.CartData
 }
 
-// DeleteCart implements cart.CartService
-func (*cartUseCase) DeleteCart(token interface{}) error {
-	panic("unimplemented")
-}
-
-// UpdateCart implements cart.CartService
-func (*cartUseCase) UpdateCart(token interface{}, cartID uint, updatedCart cart.Core) (cart.Core, error) {
-	panic("unimplemented")
-}
-
 func New(cd cart.CartData) cart.CartService {
 	return &cartUseCase{
 		qry: cd,
@@ -56,4 +46,16 @@ func (cuc *cartUseCase) ShowCart(token interface{}) ([]cart.Core, error) {
 		return []cart.Core{}, errors.New("query error, problem with server")
 	}
 	return res, nil
+}
+
+// DeleteCart implements cart.CartService
+func (cuc *cartUseCase) DeleteCart(token interface{}, cartID uint) error {
+	userID := helper.ExtractToken(token)
+	err := cuc.qry.DeleteCart(uint(userID), cartID)
+
+	if err != nil {
+		log.Println("query error", err.Error())
+		return errors.New("query error, problem with server")
+	}
+	return nil
 }

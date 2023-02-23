@@ -12,11 +12,6 @@ type cartQuery struct {
 	db *gorm.DB
 }
 
-// DeleteCart implements cart.CartData
-func (*cartQuery) DeleteCart(userID uint) error {
-	panic("unimplemented")
-}
-
 func New(db *gorm.DB) cart.CartData {
 	return &cartQuery{
 		db: db,
@@ -76,4 +71,23 @@ func (cq *cartQuery) ShowCart(userID uint) ([]cart.Core, error) {
 	}
 	return result, nil
 
+}
+
+func (cq *cartQuery) DeleteCart(userID, cartID uint) error {
+	data := Cart{}
+	qry := cq.db.Where("id = ? and user_id = ?", cartID, userID).Delete(&data)
+
+	affrows := qry.RowsAffected
+	if affrows <= 0 {
+		log.Println("no rows affected")
+		return errors.New("no cart deleted")
+	}
+
+	err := qry.Error
+	if err != nil {
+		log.Println("delete query error", err.Error())
+		return errors.New("delete data fail")
+	}
+
+	return nil
 }

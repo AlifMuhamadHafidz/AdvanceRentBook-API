@@ -39,11 +39,11 @@ type CartHandler interface {
 type CartService interface {
 	AddCart(token interface{}, bookID uint, newCart Core) (Core, error)
 	ShowCart(token interface{}) ([]Core, error)
-	DeleteCart(token interface{}) error
+	DeleteCart(token interface{}, cartID uint) error
 }
 
 type CartData interface {
 	AddCart(userID uint, bookID uint, newCart Core) (Core, error)
 	ShowCart(userID uint) ([]Core, error)
-	DeleteCart(userID uint) error
+	DeleteCart(userID, cartID uint) error
 }

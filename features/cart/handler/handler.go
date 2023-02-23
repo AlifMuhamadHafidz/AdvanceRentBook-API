@@ -4,22 +4,13 @@ import (
 	"advancerentbook-api/features/cart"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 type cartControll struct {
 	srv cart.CartService
-}
-
-// DeleteCart implements cart.CartHandler
-func (*cartControll) DeleteCart() echo.HandlerFunc {
-	panic("unimplemented")
-}
-
-// UpdateCart implements cart.CartHandler
-func (*cartControll) UpdateCart() echo.HandlerFunc {
-	panic("unimplemented")
 }
 
 func New(srv cart.CartService) cart.CartHandler {
@@ -58,7 +49,23 @@ func (cc *cartControll) ShowCart() echo.HandlerFunc {
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"data":    GetCartResp(res),
-			"message": "success show cart",
+			"message": "success show all book in cart",
+		})
+	}
+}
+
+func (cc *cartControll) DeleteCart() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		paramID := c.Param("id")
+		cartID, _ := strconv.Atoi(paramID)
+		err := cc.srv.DeleteCart(token, uint(cartID))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete cart",
 		})
 	}
 }
