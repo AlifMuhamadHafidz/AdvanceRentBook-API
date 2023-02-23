@@ -214,7 +214,7 @@ func TestUpdate(t *testing.T) {
 		filePathFake := filepath.Join("..", "..", "..", "test.csv")
 		headerFake, err := helper.UnitTestingUploadFileMock(filePathFake)
 		if err != nil {
-			log.Panic("dari file header", err.Error())
+			log.Panic("from file header", err.Error())
 		}
 		srv := New(repo)
 		_, token := helper.GenerateJWT(1)

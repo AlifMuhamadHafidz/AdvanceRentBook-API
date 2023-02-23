@@ -49,7 +49,7 @@ func (buc *bookUseCase) GetAllBook(quote string) ([]book.Core, error) {
 		if strings.Contains(err.Error(), "book") {
 			return []book.Core{}, errors.New("book not found")
 		} else {
-			return []book.Core{}, errors.New("data not found")
+			return []book.Core{}, errors.New("internal server error")
 		}
 	}
 	return res, nil
