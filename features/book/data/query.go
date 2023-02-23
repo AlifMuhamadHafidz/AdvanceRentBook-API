@@ -89,7 +89,7 @@ func (bq *bookQuery) Update(userID uint, bookID uint, updatedBook book.Core) (bo
 
 func (bq *bookQuery) Delete(userID uint, bookID uint) error {
 	getID := Book{}
-	err := bq.db.Where("id = ?", bookID).First(&getID).Error
+	err := bq.db.Where("id = ? and user_id = ?", bookID, userID).First(&getID).Error
 	if err != nil {
 		log.Println("get book error : ", err.Error())
 		return errors.New("failed to get book data")

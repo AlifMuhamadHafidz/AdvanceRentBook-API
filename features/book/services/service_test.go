@@ -383,8 +383,8 @@ func TestMyBook(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("server problem", func(t *testing.T) {
-		repo.On("MyBook", uint(1)).Return([]book.Core{}, errors.New("server problem")).Once()
+	t.Run("there is a problem with the server", func(t *testing.T) {
+		repo.On("MyBook", uint(1)).Return([]book.Core{}, errors.New("there is a problem with the server")).Once()
 
 		srv := New(repo)
 		_, token := helper.GenerateJWT(1)
