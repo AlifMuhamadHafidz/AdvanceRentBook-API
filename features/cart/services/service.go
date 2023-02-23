@@ -17,11 +17,6 @@ func (*cartUseCase) DeleteCart(token interface{}) error {
 	panic("unimplemented")
 }
 
-// ShowCart implements cart.CartService
-func (*cartUseCase) ShowCart(token interface{}) ([]cart.Core, error) {
-	panic("unimplemented")
-}
-
 // UpdateCart implements cart.CartService
 func (*cartUseCase) UpdateCart(token interface{}, cartID uint, updatedCart cart.Core) (cart.Core, error) {
 	panic("unimplemented")
@@ -49,6 +44,16 @@ func (cuc *cartUseCase) AddCart(token interface{}, bookID uint, newCart cart.Cor
 		}
 		log.Println("error add query in service: ", err.Error())
 		return cart.Core{}, errors.New(msg)
+	}
+	return res, nil
+}
+
+func (cuc *cartUseCase) ShowCart(token interface{}) ([]cart.Core, error) {
+	userID := helper.ExtractToken(token)
+	res, err := cuc.qry.ShowCart(uint(userID))
+	if err != nil {
+		log.Println("query error", err.Error())
+		return []cart.Core{}, errors.New("query error, problem with server")
 	}
 	return res, nil
 }

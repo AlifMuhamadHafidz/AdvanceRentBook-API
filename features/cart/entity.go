@@ -33,20 +33,17 @@ type User struct {
 type CartHandler interface {
 	AddCart() echo.HandlerFunc
 	ShowCart() echo.HandlerFunc
-	UpdateCart() echo.HandlerFunc
 	DeleteCart() echo.HandlerFunc
 }
 
 type CartService interface {
 	AddCart(token interface{}, bookID uint, newCart Core) (Core, error)
 	ShowCart(token interface{}) ([]Core, error)
-	UpdateCart(token interface{}, cartID uint, updatedCart Core) (Core, error)
 	DeleteCart(token interface{}) error
 }
 
 type CartData interface {
 	AddCart(userID uint, bookID uint, newCart Core) (Core, error)
 	ShowCart(userID uint) ([]Core, error)
-	UpdateCart(userID uint, cartID uint, updatedCart Core) (Core, error)
 	DeleteCart(userID uint) error
 }

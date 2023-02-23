@@ -17,16 +17,6 @@ func (*cartQuery) DeleteCart(userID uint) error {
 	panic("unimplemented")
 }
 
-// ShowCart implements cart.CartData
-func (*cartQuery) ShowCart(userID uint) ([]cart.Core, error) {
-	panic("unimplemented")
-}
-
-// UpdateCart implements cart.CartData
-func (*cartQuery) UpdateCart(userID uint, cartID uint, updatedCart cart.Core) (cart.Core, error) {
-	panic("unimplemented")
-}
-
 func New(db *gorm.DB) cart.CartData {
 	return &cartQuery{
 		db: db,
@@ -51,4 +41,39 @@ func (cq *cartQuery) AddCart(userID uint, bookID uint, newCart cart.Core) (cart.
 	}
 	result := DataToCore(cnv)
 	return result, nil
+}
+
+func (cq *cartQuery) ShowCart(userID uint) ([]cart.Core, error) {
+	res := []Cart{}
+	err := cq.db.Where("user_id = ?", userID).Find(&res).Error
+
+	if err != nil {
+		log.Println("query error", err.Error())
+		return []cart.Core{}, errors.New("server error")
+	}
+
+	result := []cart.Core{}
+	for i := 0; i < len(res); i++ {
+		result = append(result, DataToCore(res[i]))
+		// cari data user berdasarkan cart user_id
+
+		book := Book{}
+		err = cq.db.Where("id = ?", res[i].BookID).First(&book).Error
+		if err != nil {
+			log.Println("query error", err.Error())
+			return []cart.Core{}, errors.New("server error")
+		}
+		user := User{}
+		err = cq.db.Where("id = ?", book.UserID).First(&user).Error
+		if err != nil {
+			log.Println("query error", err.Error())
+			return []cart.Core{}, errors.New("server error")
+		}
+		// cari data product berdasarkan cart product_id
+		result[i].Owner = user.Name
+		result[i].BookName = book.Title
+		result[i].Image = book.Image
+	}
+	return result, nil
+
 }

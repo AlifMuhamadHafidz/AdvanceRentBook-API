@@ -17,11 +17,6 @@ func (*cartControll) DeleteCart() echo.HandlerFunc {
 	panic("unimplemented")
 }
 
-// ShowCart implements cart.CartHandler
-func (*cartControll) ShowCart() echo.HandlerFunc {
-	panic("unimplemented")
-}
-
 // UpdateCart implements cart.CartHandler
 func (*cartControll) UpdateCart() echo.HandlerFunc {
 	panic("unimplemented")
@@ -50,6 +45,20 @@ func (cc *cartControll) AddCart() echo.HandlerFunc {
 		log.Println(res)
 		return c.JSON(http.StatusCreated, map[string]interface{}{
 			"message": "success add book to cart",
+		})
+	}
+}
+
+func (cc *cartControll) ShowCart() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		res, err := cc.srv.ShowCart(token)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{"message": "internal server error"})
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    GetCartResp(res),
+			"message": "success show cart",
 		})
 	}
 }
