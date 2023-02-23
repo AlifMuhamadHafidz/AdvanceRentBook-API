@@ -105,3 +105,17 @@ func (bq *bookQuery) Delete(userID uint, bookID uint) error {
 
 	return nil
 }
+
+func (bq *bookQuery) MyBook(userID uint) ([]book.Core, error) {
+	res := []Book{}
+	if err := bq.db.Where("user_id = ?", userID).Order("created_at desc").Find(&res).Error; err != nil {
+		log.Println("get employee approval query error : ", err.Error())
+		return []book.Core{}, err
+	}
+	result := []book.Core{}
+	for _, val := range res {
+		result = append(result, DataToCore(val))
+	}
+
+	return result, nil
+}

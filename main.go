@@ -55,6 +55,7 @@ func main() {
 	e.POST("/books", bHdl.Add(), middleware.JWT([]byte(config.JWTKey)))
 	e.GET("/books", bHdl.GetAllBook())
 	e.GET("/books/:id", bHdl.BookDetail())
+	e.GET("/mybook", bHdl.MyBook(), middleware.JWT([]byte(config.JWTKey)))
 	e.PUT("/books/:id", bHdl.Update(), middleware.JWT([]byte(config.JWTKey)))
 	e.DELETE("/books/:id", bHdl.Delete(), middleware.JWT([]byte(config.JWTKey)))
 

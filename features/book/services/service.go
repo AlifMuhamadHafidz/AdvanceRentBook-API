@@ -106,3 +106,20 @@ func (buc *bookUseCase) Delete(token interface{}, bookID uint) error {
 
 	return nil
 }
+
+func (buc *bookUseCase) MyBook(token interface{}) ([]book.Core, error) {
+	id := helper.ExtractToken(token)
+	res, err := buc.qry.MyBook(uint(id))
+
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "book not found"
+		} else {
+			msg = "there is a problem with the server"
+		}
+		return []book.Core{}, errors.New(msg)
+	}
+
+	return res, nil
+}

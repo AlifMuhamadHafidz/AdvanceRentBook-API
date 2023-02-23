@@ -206,3 +206,22 @@ func (bc *bookControll) Delete() echo.HandlerFunc {
 		})
 	}
 }
+
+func (bc *bookControll) MyBook() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		res, err := bc.srv.MyBook(token)
+
+		if err != nil {
+			return c.JSON(helper.PrintErrorResponse(err.Error()))
+		}
+		result := []Book{}
+		for _, val := range res {
+			result = append(result, BookResponse(val))
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    result,
+			"message": "success get all user book",
+		})
+	}
+}
