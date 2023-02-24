@@ -1,0 +1,996 @@
+openapi: 3.0.3
+info:
+  title: Advance-RentBook-API
+  description: This is API for Advance Rent Book Project
+  version: "1.0.0"
+  contact:
+    email: alifmuhamadhafidz23@gmail.com
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ALIFMUHAMADHAFIDZ23/Advance-RentBook-API/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://app.swaggerhub.com/apis/ALIFMUHAMADHAFIDZ23/Advance-RentBook-API/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://app.swaggerhub.com/apis/ALIFMUHAMADHAFIDZ23/Advance-RentBook-API/1.0.0
+  - url: https://baggioshop.site
+    description: primarry link
+
+paths:
+  /register:
+    post:
+      tags:
+        - "Auth"
+      description: register feature for new users
+      summary: register feature for new users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                birth_of_date:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                phone:
+                  type: string
+                address:
+                  type: string
+            example:
+              name: "Alif Muhamad Hafidz"
+              username: "alif23"
+              birth_of_date: "2000-01-31"
+              email: "alifmuhamadhafidz23@gmail.com"
+              password: "123"
+              phone: "0813456"
+              address: "Bangka"
+      responses:
+        201:
+          description: "success insert data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success create account"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+  /login:
+    post:
+      tags:
+        - "Auth"
+      description: login feature for users
+      summary: login feature for users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nip:
+                  type: string
+                password:
+                  type: string
+                  format: password
+            example:
+              username: "alif23"
+              password: "123"
+      responses:
+        200:
+          description: "login success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  id: 1
+                  name: "Alif Muhamad Hafidz"
+                  username: "alif23"
+                  email: "alifmuhamadhafidz23@gmail.com"
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VySUQiOjR9.QTZxERh4CwC_UnL_eJvTi_A_qdLeBZ-IjR4nqoxjodk"
+                message: "login success"
+
+        400:
+          $ref: "#/components/responses/400"
+        404:
+          description: data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "account not registered"
+        500:
+          $ref: "#/components/responses/500"
+  /books:
+    post:
+      tags:
+        - "Book"
+      description: post a book
+      summary: post a book
+      security:
+        - JWTAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+                published:
+                  type: integer
+                author:
+                  type: string
+                publisher:
+                  type: string
+                rent_price:
+                  type: number
+            example:
+              image: "https://1.bp.blogspot.com/-e8s4FEI8wKs/WgpNDkIWdhI/AAAAAAAAAyQ/SUryjPXhJ28zqb32zPCyGZLjXCT0khK2wCLcBGAs/s1600/Contoh%2BSurat%2BKeterangan%2BSakit.png"
+              title: "HunterXHunter"
+              published: 1998
+              author: "Yoshihiro Togashi"
+              publisher: "Shueisha"
+              rent_price: 20000
+          application/json:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                title:
+                  type: string
+                published:
+                  type: integer
+                author:
+                  type: string
+                publisher:
+                  type: string
+                rent_price:
+                  type: number
+            example:
+              image: "https://1.bp.blogspot.com/-e8s4FEI8wKs/WgpNDkIWdhI/AAAAAAAAAyQ/SUryjPXhJ28zqb32zPCyGZLjXCT0khK2wCLcBGAs/s1600/Contoh%2BSurat%2BKeterangan%2BSakit.png"
+              title: "HunterXHunter"
+              published: 1998
+              author: "Yoshihiro Togashi"
+              publisher: "Shueisha"
+              rent_price: 20000
+      responses:
+        201:
+          description: "success insert data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success post a book"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+    get:
+      tags:
+        - "Book"
+      description: get all book
+      summary: get all book
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+            maximum: 50
+          examples:
+            none:
+              value: ""
+              summary: "to get all book list"
+            name:
+              value: "One"
+              summary: "to search book by it's name"
+      responses:
+        200:
+          description: "get all book"
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                data:
+                  [
+                    {
+                      id: 1,
+                      image: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg",
+                      title: "HunterXHunter",
+                      published: 1998,
+                      author: "Yoshihiro Togashi",
+                      publisher: "Shueisha",
+                      rent_price: 20000,
+                    },
+                    {
+                      id: 2,
+                      image: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg",
+                      title: "Naruto",
+                      published: 1998,
+                      author: "Masashi Kishimoto",
+                      publisher: "Shueisha",
+                      rent_price: 20000,
+                    },
+                  ]
+                message: "success show all book"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+  /books/{book_id}:
+    get:
+      tags:
+        - "Book"
+      description: get book details by book id
+      summary: get book details by book id
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "get book details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  id: 1
+                  image: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg"
+                  title: "HunterXHunter"
+                  published: 1998
+                  author: "Yoshihiro Togashi"
+                  publisher: "Shueisha"
+                  rent_price: 20000
+                message: "success get book details"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+    put:
+      tags:
+        - "Book"
+      description: update book by book id
+      summary: update book by book id
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+            example:
+              image: "https://1.bp.blogspot.com/-e8s4FEI8wKs/WgpNDkIWdhI/AAAAAAAAAyQ/SUryjPXhJ28zqb32zPCyGZLjXCT0khK2wCLcBGAs/s1600/Contoh%2BSurat%2BKeterangan%2BSakit.png"
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                published:
+                  type: integer
+                author:
+                  type: string
+                publisher:
+                  type: string
+                rent_price:
+                  type: number
+            example:
+              title: "One Piece"
+              published: 1997
+              author: "Eichiro Oda"
+              publisher: "Shueisha"
+              rent_price: 20000
+      responses:
+        200:
+          description: success update book
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  id: 1
+                  image: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg"
+                  title: "One Piece"
+                  published: 1997
+                  author: "Eichiro Oda"
+                  publisher: "Shueisha"
+                  rent_price: 20000
+                message: "success update book"
+        400:
+          $ref: "#/components/responses/400"
+        404:
+          description: data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "data not found"
+        500:
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - "Book"
+      description: delete book by book id
+      summary: delete book by book id
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: success delete book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success delete book"
+        400:
+          $ref: "#/components/responses/400"
+        404:
+          description: data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "data not found"
+        500:
+          $ref: "#/components/responses/500"
+  /users:
+    get:
+      tags:
+        - "User"
+      description: get user profile
+      summary: get user profile
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: success show user profile
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                data:
+                  id: 2
+                  profile_picture: "https://fauziawsbucket.s3.ap-southeast-1.amazonaws.com/559d75ff-88c8-40af-8740-233667b36feco.png"
+                  name: "Alif Muhamad Hafidz"
+                  username: "alif23"
+                  birth_of_date: "2000-01-31"
+                  email: "alifmuhamadhafidz23@gmail.com"
+                  phone: "0813456"
+                  address: "Bangka"
+                message: "success show profile"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+    put:
+      tags:
+        - "User"
+      description: edit user profile
+      summary: edit user profile
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                profile_picture:
+                  type: string
+                  format: binary
+            example:
+              profile_picture: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg"
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                birth_of_date:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                phone:
+                  type: string
+                address:
+                  type: string
+            example:
+              name: "Alif Muhamad Hafidz"
+              username: "alifhfdz23"
+              birth_of_date: "2000-01-31"
+              email: "alifmuhamadhafidz23@gmail.com"
+              password: "1234"
+              phone: "0813456"
+              address: "Bangka"
+      responses:
+        200:
+          description: success update user profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  id: 1
+                  profile_picture: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg"
+                  name: "Alif Muhamad Hafidz"
+                  username: "alifhfdz23"
+                  birth_of_date: "2000-01-31"
+                  email: "alifmuhamadhafidz23@gmail.com"
+                  password: "1234"
+                  phone: "0813456"
+                  address: "Bangka"
+                message: "success update user profile"
+        400:
+          $ref: "#/components/responses/400"
+        404:
+          description: data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "data not found"
+        500:
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - "User"
+      description: deactivate user
+      summary: deactivate user
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: success deactivate
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "succes deactivate"
+        404:
+          description: data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "data not found"
+        500:
+          $ref: "#/components/responses/500"
+  /carts:
+    post:
+      tags:
+        - "Cart"
+      summary: "add book to cart"
+      description: "adding book to cart"
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                book_id:
+                  type: integer
+            example:
+              book_id: 1
+      responses:
+        201:
+          description: "success add book to cart"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                message: "success add book to cart"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+    get:
+      tags:
+        - "Cart"
+      summary: "show all book in cart"
+      description: "showing all book in cart"
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: "success show all book in cart"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  [
+                    {
+                      id: 1,
+                      book_name: "One Piece",
+                      owner_id: 1,
+                      rent_price: 20500,
+                      image: "https://alif-s3.s3.ap-southeast-1.amazonaws.com/fCp1XMBB23As64znGvh5D.jpg",
+                    },
+                    {
+                      id: 2,
+                      book_name: "One Punch Man",
+                      owner_id: 3,
+                      rent_price: 20000,
+                      image: "https://alif-s3.s3.ap-southeast-1.amazonaws.com/fCp1XMBB23As64znGvh5D.jpg",
+                    },
+                  ]
+                message: "success show all book in cart"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+
+  /carts/{cart_id}:
+    put:
+      tags:
+        - "Cart"
+      summary: "edit product in cart"
+      description: "edit or update book in cart by ID product"
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: cart_id
+          description: "id cart"
+          required: true
+          in: path
+          schema:
+            description: "id cart"
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                id_cart: 1
+      responses:
+        200:
+          description: "success edit book in cart"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  id_cart: 1
+                message: "success edit book in cart"
+        404:
+          description: "wrong input"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "cart not found"
+        500:
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - "Cart"
+      summary: "delete cart"
+      description: "delete cart"
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: cart_id
+          description: "id cart"
+          required: true
+          in: path
+          schema:
+            description: "id cart"
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: "success delete cart"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                message: "success delete cart"
+        404:
+          description: "wrong input"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "cart not found"
+        500:
+          $ref: "#/components/responses/500"
+  /orders:
+    post:
+      tags:
+        - "Rent"
+      summary: "add order for rent book to payment gateway"
+      description: "add order for rent book to payment gateway"
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                total_rent_price:
+                  type: number
+                  example: 40500
+      responses:
+        201:
+          description: "order payment created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  id: 1
+                  borrower_id: 1
+                  owner_id: 2
+                  total_rent_price: 40500
+                  rent_return: "2023-02-27"
+                  ordered_at: "2023-02-20"
+                  payment_url: "https://app.sandbox.xendit.com/snap/v3/redirection/b95128fb-f2ef-4e57-bd89-c4a187cca536"
+                  status_order: "waiting for payment"
+                message: "rent payment created"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+    get:
+      tags:
+        - "Rent"
+      summary: "show oreder history from book borrower"
+      description: "show order history from book borrower"
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: "success show rent history"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  - id: 1
+                    borrower_id: 2
+                    borrower_name: "Alfian"
+                    owner_id: 1
+                    owner_name: "Alif"
+                    total_rent_price: 40000
+                    rent_return: "2023-02-27"
+                    ordered_at: "2023-02-20"
+                    books:
+                      [
+                        { book_id: 1, name: "One Piece" },
+                        { book_id: 2, name: "Naruto" },
+                      ]
+                    order_status: "waiting payment"
+                  - id: 2
+                    borrower_id: 3
+                    borrower_name: "Putra"
+                    owner_id: 1
+                    owner_name: "Alif"
+                    total_rent_price: 20000
+                    rent_return: "2023-02-27"
+                    ordered_at: "2023-02-20"
+                    book: [{ book_id: 3, name: "One Punch Man" }]
+                    order_status: "canceled"
+                message: "success show order history"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+  /rent:
+    get:
+      tags:
+        - "Rent"
+      summary: "show rent history from book owner"
+      description: "show rent history from book owner"
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: "show rent history"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                data:
+                  - id: 1
+                    borrower_id: 2
+                    borrower_name: "Alfian"
+                    owner_id: 1
+                    owner_name: "Alif"
+                    total_rent_price: 40000
+                    books:
+                      [
+                        { book_id: 1, name: "One Piece" },
+                        { book_id: 2, name: "Naruto" },
+                      ]
+                    rent_return: "2023-02-27"
+                    ordered_at: "2023-02-20"
+                    order_status: "waiting payment"
+                  - id: 2
+                    borrower_id: 3
+                    borrower_name: "Putra"
+                    owner_id: 1
+                    owner_name: "Alif"
+                    total_rent_price: 20000
+                    book: [{ book_id: 3, name: "One Punch Man" }]
+                    rent_return: "2023-02-27"
+                    ordered_at: "2023-02-20"
+                    order_status: "transaction success"
+                message: "success show rent history"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+  /paymentnotification:
+    post:
+      tags:
+        - "Rent"
+      summary: "recieve payment notification from payment gateway"
+      description: "recieve payment notification from payment gateway"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_order:
+                  type: string
+                  example: "transaction-1"
+      responses:
+        200:
+          description: "show rent order status"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                message: "success handling payment notification"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+
+  /orders/{order_id}:
+    put:
+      tags:
+        - "Rent"
+      summary: "update rent order status"
+      description: "update rent order status"
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: order_id
+          description: "order_id"
+          required: true
+          in: path
+          schema:
+            description: "order_id"
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order_status:
+                  type: string
+            example:
+              order_status: "canceled"
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                order_status:
+                  type: string
+            example:
+              order_status: "canceled"
+      responses:
+        200:
+          description: "success cancel rent order"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseObject"
+              example:
+                message: "success update rent order status"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+  /mybook:
+    get:
+      tags:
+        - "User"
+      summary: get all user book
+      description: get all user book
+      security:
+        - JWTAuth: []
+      responses:
+        200:
+          description: success all user book
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                data:
+                  [
+                    {
+                      id: 1,
+                      image: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg",
+                      title: "One Piece",
+                      published: 1997,
+                      author: "Eichiro Oda",
+                      publisher: "Shueisha",
+                      qty: 20,
+                      rent_price: 20000,
+                    },
+                    {
+                      id: 2,
+                      image: "https://kurabsent.s3.amazonaws.com/2022-07-06%2006%3A40%3A47.jpg",
+                      title: "One Punch Man",
+                      published: 2009,
+                      author: "ONE, Yusuke Murata",
+                      publisher: "Shueisha",
+                      qty: 20,
+                      rent_price: 20000,
+                    },
+                  ]
+                message: "success get all user book"
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    responseObject:
+      type: object
+      properties:
+        data:
+          type: object
+        message:
+          type: string
+  responses:
+    400:
+      description: "error from user"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          example:
+            message: "bad request"
+    500:
+      description: "error from server"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          example:
+            message: "internal server error"
